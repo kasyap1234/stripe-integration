@@ -20,7 +20,7 @@ type BalanceTransactionResponse struct {
     FeeDetails       []interface{} `json:"fee_details"`
     Net              int64         `json:"net"`
     ReportingCategory string        `json:"reporting_category"`
-    Source           string        `json:"source"`
+    Source           interface {}      `json:"source"`
     Status           string        `json:"status"`
     Type             string        `json:"type"`
 }
@@ -52,7 +52,7 @@ func BalanceTransactions(context context.Context, s *Service, id string) (*Balan
 		Net:               result.Net,
 		ReportingCategory: string(result.ReportingCategory),
 		Source:            result.Source,
-		Status:            result.Status,
-		Type:              result.Type,
+		Status:            string(result.Status),
+		Type:              string(result.Type),
 	}, nil
 }
