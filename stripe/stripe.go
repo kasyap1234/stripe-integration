@@ -15,6 +15,7 @@ var secrets struct {
 	StripeKey string
 }
 
+// initService initializes the Stripe service
 func initService() (*Service, error) {
 	stripe.Key = secrets.StripeKey
 	stripeClient := &client.API{}

@@ -1,34 +1,43 @@
 package stripe
 
 import (
-	"context"
-
-	"github.com/stripe/stripe-go/v81"
-	"github.com/stripe/stripe-go/v81/customer"
+    "context"
+    "fmt"  
+    "github.com/stripe/stripe-go/v81"
 )
 
 type CreateCustomerParameterRequest struct {
-	Name  string `json:"name"`
-	Email string `json:"email"`
+    Name  string `json:"name"`
+    Email string `json:"email"`
 }
 
 type CustomerResultResponse struct {
-	Customer *stripe.Customer `json:"customer"`
+    ID      string `json:"id"`
+    Name    string `json:"name"`
+    Email   string `json:"email"`
+    Created int64  `json:"created"`
 }
 
 //encore:api public method=POST path=/stripe/customers
 func (s *Service) CreateCustomer(ctx context.Context, req CreateCustomerParameterRequest) (*CustomerResultResponse, error) {
-	params := &stripe.CustomerParams{
-		Email: stripe.String(req.Email),
-		Name:  stripe.String(req.Name),
-	}
+    if s.stripeClient == nil {
+        return nil, fmt.Errorf("stripe client not initialized")
+    }
 
-	cust, err := s.stripeClient.Customers.New(params)
-	if err != nil {
-		return nil, err
-	}
+    params := &stripe.CustomerParams{
+        Email: stripe.String(req.Email),
+        Name:  stripe.String(req.Name),
+    }
 
-	return &CustomerResultResponse{
-		Customer: cust,
-	}, nil
+    cust, err := s.stripeClient.Customers.New(params)
+    if err != nil {
+        return nil, fmt.Errorf("failed to create customer: %w", err)
+    }
+
+    return &CustomerResultResponse{
+        ID:      cust.ID,
+        Name:    cust.Name,
+        Email:   cust.Email,
+        Created: cust.Created,
+    }, nil
 }
